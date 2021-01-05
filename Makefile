@@ -15,7 +15,7 @@ LIBS = -lcrypto -ldeflate
 default: all
 all: extract
 
-extract: $(LIB_DIR)/libdeflate.a $(OBJS) gzip_1_2_4
+bk_extract: $(LIB_DIR)/libdeflate.a $(OBJS) gzip_1_2_4
 	g++ -o bk_extract bk_extract.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
 
 clean: libdeflate_clean
