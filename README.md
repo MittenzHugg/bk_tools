@@ -2,5 +2,7 @@
 tools for extracting working with Banjo-Kazooie
 
 **bk_extract**
+
 *-r </path/to/rom.x64 | /path/to/rom/dir/>* specifies path to rom files 
+
 *-p </path/to/output/dir>* specifies path to output directory.
