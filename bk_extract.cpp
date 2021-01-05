@@ -120,6 +120,8 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
 	if(_buffer == nullptr){
 		return;
 	}
+	unknown_rom_sections = std::map<uint32_t,uint32_t>();
+	_sections =  std::vector<rom_sec>();
     unknown_rom_sections.insert_or_assign(0,rom_size);
 
 	rom_f.seekg(0);
@@ -215,35 +217,38 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
     section_rom(0,0x40, bin_path + "/n64_head.bin");
 
 	//n64_boot
-    std::cout << "[0x40, 0x1000] n64_book.bin" << std::endl;
+    std::cout << "[0x40, 0x1000] n64_boot.bin" << std::endl;
 	n64_span n64_boot = section_rom(0x40, 0x1000 - 0x40, bin_path + "/n64_boot.bin");
 
 	//bk_boot
-    std::cout << "[0x1000, 0x4BE0] bk_book.bin" << std::endl;
+    std::cout << "[0x1000, 0x4BE0] bk_boot.bin" << std::endl;
 	n64_span bk_boot = section_rom(0x1000, 0x4BE0, (bin_path + "/" + "bk_boot.bin"));
+	try{
+		//bk_core1
+		uint32_t bk_core1_offset = _from_inst(bk_boot, 0x7A, 0x82); 
+		uint32_t bk_core1_size = _from_inst(bk_boot, 0x7E, 0x86);
+		n64_span bk_core1 = section_rom(bk_core1_offset, bk_core1_size - bk_core1_offset, bin_path + "/bk_core_1.bin");
+		std::cout << "[" << bk_core1_offset << ", " << bk_core1_size << "] bk_core_1.bin" << std::endl;
+		//decompress
+		bk_asm core1(bk_core1);
+		span_write(core1.code(), bin_path + "/bk_core_1.code.bin");
+		span_write(core1.data(), bin_path + "/bk_core_1.data.bin");
+		std::cout << "bk_core_1.bin decompressed" << std::endl;
 
-	//bk_core1
-	uint32_t bk_core1_offset = _from_inst(bk_boot, 0x7A, 0x82); 
-	uint32_t bk_core1_size = _from_inst(bk_boot, 0x7E, 0x86);
-	n64_span bk_core1 = section_rom(bk_core1_offset, bk_core1_size - bk_core1_offset, bin_path + "/bk_core_1.bin");
-    std::cout << "[" << bk_core1_offset << ", " << bk_core1_size << "] bk_core_1.bin" << std::endl;
-    //decompress
-	bk_asm core1(bk_core1);
-	span_write(core1.code(), bin_path + "/bk_core_1.code.bin");
-	span_write(core1.data(), bin_path + "/bk_core_1.data.bin");
-	std::cout << "bk_core_1.bin decompressed" << std::endl;
+		//bk_core_2
+		uint32_t bk_core2_offset = _from_inst(bk_boot, 0x17FA, 0x1822); 
+		uint32_t bk_core2_size = _from_inst(bk_boot, 0x17FE, 0x1826); 
+		n64_span bk_core2 = section_rom(bk_core2_offset, bk_core2_size - bk_core2_offset, bin_path + "/" + "bk_core_2.bin");
+		std::cout << "[" << bk_core2_offset << ", " << bk_core2_size << "] bk_core_2.bin" << std::endl;
+		bk_asm core2(bk_core2);
+		span_write(core2.code(), bin_path + "/bk_core_2.code.bin");
+		span_write(core2.data(), bin_path + "/bk_core_2.data.bin");
+		std::cout << "bk_core_2.bin decompressed" << std::endl;
 
-	//bk_core_2
-	uint32_t bk_core2_offset = _from_inst(bk_boot, 0x17FA, 0x1822); 
-	uint32_t bk_core2_size = _from_inst(bk_boot, 0x17FE, 0x1826); 
-	n64_span bk_core2 = section_rom(bk_core2_offset, bk_core2_size - bk_core2_offset, bin_path + "/" + "bk_core_2.bin");
-    std::cout << "[" << bk_core2_offset << ", " << bk_core2_size << "] bk_core_2.bin" << std::endl;
-	bk_asm core2(bk_core2);
-	span_write(core2.code(), bin_path + "/bk_core_2.code.bin");
-	span_write(core2.data(), bin_path + "/bk_core_2.data.bin");
-	std::cout << "bk_core_2.bin decompressed" << std::endl;
-
-
+	}
+	catch(const char* s){
+		std::cout << s << std::endl;
+	}
 	//level overlays
 	for(int i = 0; i < 0x0D; i++){
 		uint32_t upper = level_asm_upper[i];
