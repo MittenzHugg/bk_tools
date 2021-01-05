@@ -1,3 +1,9 @@
+gzip_1_2_4
+bk_extract
+*.z64
+*.n64
+*.v64
+
 # Prerequisites
 *.d
 
