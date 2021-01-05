@@ -88,10 +88,20 @@ bk_asset::~bk_asset(){
         free(_decomp_data);
         _decomp_data = nullptr;
     }
-    //if(_comp_buffer != nullptr && _comp_buffer != _decomp_buffer)
-        //delete _comp_buffer;
-    //if(_decomp_buffer != nullptr)
-        //delete _decomp_buffer;
+    /*if(_comp_buffer != nullptr && _comp_buffer != _decomp_buffer){
+        free(_comp_buffer);
+        _comp_buffer = nullptr;
+    }*/
+    /*if(_decomp_buffer != nullptr){
+        free(_decomp_buffer);
+        _decomp_buffer = nullptr;
+        _comp_buffer = nullptr;
+    }*/
+
+    if(_decomper != nullptr){
+        free(_decomper);
+        _decomper = nullptr;
+    }
 }
 
 uint32_t bk_asset::compare(const bk_asset& other) const{

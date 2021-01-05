@@ -25,9 +25,6 @@ public:
 	n64_span(const n64_span& src)
 		:_begin(src._begin)
 		, _end(src._end){}
-	n64_span(uint8_t* const begin,  uint8_t* const end)
-		: _begin(begin)
-		, _end(end) {}
 	n64_span(uint8_t* const begin, const size_t size) 
 		: _begin(begin)
 		, _end(begin + size) {}

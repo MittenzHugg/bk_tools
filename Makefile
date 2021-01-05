@@ -6,22 +6,25 @@ endif
 CXX = g++
 CXXFLAGS = -std=c++2a
 
-SRCS = bk_asset.cpp file_helper.cpp
+SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 LIB_DIR = lib
 LIBS = -lcrypto -ldeflate 
 
 default: all
-all: extract
+all: bk_extract
 
 bk_extract: $(LIB_DIR)/libdeflate.a $(OBJS) gzip_1_2_4
 	g++ -o bk_extract bk_extract.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
 
-clean: libdeflate_clean
+clean:
 	rm -f *.o
 	rm -f bk_extract
 	cd $(LIB_DIR) && rm -f *.a
+
+very_clean: libdeflate_clean clean
+	rm -f gzip_1_2_4
 
 gzip_1_2_4:
 	cd gzip-1.2.4 && make gzip

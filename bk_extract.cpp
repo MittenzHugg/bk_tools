@@ -9,6 +9,7 @@
 #include "n64_span.h"
 #include <cstdint>
 #include "bk_asset.hpp"
+#include "bk_asm.hpp"
 
 #include "file_helper.hpp"
 
@@ -227,12 +228,20 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
 	n64_span bk_core1 = section_rom(bk_core1_offset, bk_core1_size - bk_core1_offset, bin_path + "/bk_core_1.bin");
     std::cout << "[" << bk_core1_offset << ", " << bk_core1_size << "] bk_core_1.bin" << std::endl;
     //decompress
+	bk_asm core1(bk_core1);
+	span_write(core1.code(), bin_path + "/bk_core_1.code.bin");
+	span_write(core1.data(), bin_path + "/bk_core_1.data.bin");
+	std::cout << "bk_core_1.bin decompressed" << std::endl;
 
 	//bk_core_2
 	uint32_t bk_core2_offset = _from_inst(bk_boot, 0x17FA, 0x1822); 
 	uint32_t bk_core2_size = _from_inst(bk_boot, 0x17FE, 0x1826); 
 	n64_span bk_core2 = section_rom(bk_core2_offset, bk_core2_size - bk_core2_offset, bin_path + "/" + "bk_core_2.bin");
     std::cout << "[" << bk_core2_offset << ", " << bk_core2_size << "] bk_core_2.bin" << std::endl;
+	bk_asm core2(bk_core2);
+	span_write(core2.code(), bin_path + "/bk_core_2.code.bin");
+	span_write(core2.data(), bin_path + "/bk_core_2.data.bin");
+	std::cout << "bk_core_2.bin decompressed" << std::endl;
 
 
 	//level overlays
@@ -241,9 +250,13 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
 		uint32_t lower = upper + 0x28;
 		uint32_t bk_lvl_offset = _from_inst(bk_boot, upper, lower);
 		uint32_t bk_lvl_size = _from_inst(bk_boot, (upper + 4), (lower + 4)); 
-		n64_span lvl_span = section_rom(bk_lvl_offset, bk_lvl_size - bk_lvl_offset, bin_path + "/level_" + std::to_string(i) + ".bin");
+		std::string lvl_name = "level_" + std::to_string(i);
+		n64_span lvl_span = section_rom(bk_lvl_offset, bk_lvl_size - bk_lvl_offset, bin_path + "/" + lvl_name + ".bin");
         std::cout << "[" << bk_lvl_offset << ", " << bk_lvl_size << "] level_" << i << ".bin" << std::endl;
-
+		bk_asm lvl_asm(lvl_span);
+		span_write(lvl_asm.code(), bin_path + "/" + lvl_name + ".code.bin");
+		span_write(lvl_asm.data(), bin_path + "/" + lvl_name + ".data.bin");
+		std::cout << lvl_name << ".bin decompressed" << std::endl;
     }
 	
 	//Assets
