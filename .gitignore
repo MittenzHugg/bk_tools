@@ -3,6 +3,7 @@ bk_extract
 *.z64
 *.n64
 *.v64
+.vscode/*
 
 # Prerequisites
 *.d
