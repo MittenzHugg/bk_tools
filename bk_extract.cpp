@@ -231,6 +231,8 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
 		std::cout << "[" << bk_core1_offset << ", " << bk_core1_size << "] bk_core_1.bin" << std::endl;
 		//decompress
 		bk_asm core1(bk_core1);
+		core1.code();
+		std::cout << "core_1.code: " << core1.code().size() << std::endl;
 		span_write(core1.code(), bin_path + "/bk_core_1.code.bin");
 		span_write(core1.data(), bin_path + "/bk_core_1.data.bin");
 		std::cout << "bk_core_1.bin decompressed" << std::endl;
