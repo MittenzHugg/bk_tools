@@ -238,6 +238,8 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
         span_write(core1.code(), bin_path + "/bk_core_1.code.bin");
         span_write(core1.data(), bin_path + "/bk_core_1.data.bin");
         std::cout << "bk_core_1.bin decompressed" << std::endl;
+        ram_info << std::hex << std::setw(8) << _from_inst(bk_boot, 0x5A, 0x66) + core1.code().size() << " " << "bk_core_1" << std::endl;
+
 
         //bk_core_2
         ram_info << std::hex << std::setw(8) << _from_inst(core1.code(), 0x0E, 0x1A) << " " << "bk_core_2" << std::endl;
@@ -248,6 +250,7 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
         bk_asm core2(bk_core2);
         span_write(core2.code(), bin_path + "/bk_core_2.code.bin");
         span_write(core2.data(), bin_path + "/bk_core_2.data.bin");
+        ram_info << std::hex << std::setw(8) << _from_inst(core1.code(), 0x0E, 0x1A) + core2.code().size() << " " << "bk_core_1" << std::endl;
         std::cout << "bk_core_2.bin decompressed" << std::endl;
     }
     catch(const char* s){
@@ -277,6 +280,8 @@ void extract_rom(const std::string p, const fs::directory_entry& f){
         span_write(lvl_asm.data(), bin_path + "/" + lvl_name + ".data.bin");
         std::cout << lvl_name << ".bin decompressed" << std::endl;
         ram_info << std::hex << std::setw(8) << level_ram << " " << lvl_name << std::endl;
+        ram_info << std::hex << std::setw(8) << level_ram + lvl_asm.code().size() << " " << lvl_name << std::endl;
+
     }
     ram_info.close();
 

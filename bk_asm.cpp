@@ -1,4 +1,6 @@
 #include "bk_asm.hpp"
+#include <iostream>
+#include <iomanip>
 
 bk_asm::bk_asm(const n64_span& span){
     _comp_span = new n64_span(span);
@@ -82,6 +84,7 @@ void bk_asm::_decomp_method(void) const{
         _code_buff, code_size, &codeCompSize, &codeSize
     );
     _code_span = new n64_span(_code_buff, codeSize);
+    std::cout << std::hex << "code_comp_size " << (uint32_t) codeCompSize <<std::endl;
     
     //decompress data
     codeCompSize +=6;

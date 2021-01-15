@@ -12,8 +12,10 @@ OBJS = $(SRCS:.cpp=.o)
 LIB_DIR = lib
 LIBS = -lcrypto -ldeflate 
 
+TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code
+
 default: all
-all: bk_extract bk_assets_build
+all: $(TARGETS)
 
 bk_extract: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
 	g++ -o bk_extract bk_extract.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
@@ -21,9 +23,15 @@ bk_extract: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
 bk_assets_build: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
 	g++ -o bk_assets_build bk_assets_build.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
 
+bk_deflate_code: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
+	g++ -o bk_deflate_code bk_deflate_code.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
+
+bk_inflate_code: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
+	g++ -o bk_inflate_code bk_inflate_code.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
+
 clean:
 	rm -f *.o
-	rm -f bk_extract bk_assets_build
+	rm -f $(TARGETS)
 	cd $(LIB_DIR) && rm -f *.a
 
 very_clean: libdeflate_clean clean
