@@ -10,40 +10,50 @@ SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 LIB_DIR = lib
-LIBS = -lcrypto -ldeflate 
+LIBS = -ldeflate
+bk_extract bk_inflate_code bk_splat_yaml: LIBS = -lcrypto -ldeflate -lyaml-cpp
+bk_inflate_code: LIBS = -lcrypto -ldeflate -lyaml-cpp
 
-TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code
+TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code bk_splat_yaml
+DEPEND = $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip
+SUBMODULES = libdeflate yaml-cpp gzip-1.2.4
 
 default: all
 all: $(TARGETS)
 
-bk_extract: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
-	g++ -o bk_extract bk_extract.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
-
-bk_assets_build: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
-	g++ -o bk_assets_build bk_assets_build.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
-
-bk_deflate_code: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
-	g++ -o bk_deflate_code bk_deflate_code.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
-
-bk_inflate_code: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
-	g++ -o bk_inflate_code bk_inflate_code.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
+$(TARGETS): $(DEPEND) $(OBJS)
+	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS) -Iyaml-cpp/include
 
 clean:
 	rm -f *.o
 	rm -f $(TARGETS)
+
+very_clean: $(foreach mod, $(SUBMODULES), $(mod)_clean) clean
 	cd $(LIB_DIR) && rm -f *.a
 
-very_clean: libdeflate_clean clean
-	rm -f gzip_1_2_4
-
-gzip_1_2_4:
-	cd gzip-1.2.4 && make gzip
-	cp -f gzip-1.2.4/gzip ./gzip_1_2_4
-
-$(LIB_DIR)/libdeflate.a: $(LIB_DIR)
-	cd libdeflate && make libdeflate.a CC=$(CC)
+$(LIB_DIR)/libdeflate.a: $(LIB_DIR) libdeflate/libdeflate.a
 	cp -f libdeflate/libdeflate.a $(LIB_DIR)
+
+libdeflate/libdeflate.a:
+	cd libdeflate && make libdeflate.a CC=$(CC)
+
+gzip-1.2.4/gzip: gzip-1.2.4/Makefile
+	cd gzip-1.2.4 && make gzip
+
+gzip-1.2.4/Makefile:
+	cd gzip-1.2.4 && ./configure
+
+$(LIB_DIR)/libyaml-cpp.a: $(LIB_DIR) yaml-cpp/build/libyaml-cppa.a
+	cp -f yaml-cpp/build/libyaml-cpp.a $(LIB_DIR)
+
+yaml-cpp/build/libyaml-cppa.a: yaml-cpp/build yaml-cpp/build/Makefile
+	cd yaml-cpp/build && make
+
+yaml-cpp/build/Makefile:
+	cd yaml-cpp/build && cmake ..
+
+yaml-cpp/build:
+	mkdir -p $@
 
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
@@ -51,5 +61,8 @@ $(LIB_DIR):
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c $<  -o $@
 
-libdeflate_clean:
-	cd libdeflate && make clean
+%_clean:
+	cd $* && make clean
+
+yaml-cpp_clean:
+	cd yaml-cpp && rm -rf build
