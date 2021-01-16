@@ -119,7 +119,7 @@ void generate_code_splat(const std::string& name, const std::string& ver_str, co
     
     YAML::Node y_Opt;
     y_Opt["find_file_boundaries"] = true;
-    y_Opt["compiler"] = R"("IDO")";
+    y_Opt["compiler"] = YAML::Load(R"("IDO")");
     y_Opt["undefined_syms"] = "undefined_syms." + ver_str + ".txt";
     y_Node["options"] = y_Opt;
 
@@ -128,16 +128,16 @@ void generate_code_splat(const std::string& name, const std::string& ver_str, co
     y_Seg[0]["type"] = "code";
     y_Seg[0]["start"] = toHex(0);
     y_Seg[0]["vram"] = toHex(RAM);
-    y_Seg[0]["files"][0] = "[" + toHex(0) + ", asm]";
+    y_Seg[0]["files"][0] = YAML::Load("[" + toHex(0) + ", asm]");
     y_Seg[1]["name"] = "data";
     y_Seg[1]["type"] = ".data";
     y_Seg[1]["start"] = toHex(asm_span.code().size());
     y_Seg[1]["vram"] = toHex(RAM + asm_span.code().size());
-    y_Seg[1]["files"][0] = "[" + toHex(asm_span.code().size()) + ", bin]";
+    y_Seg[1]["files"][0] = YAML::Load("[" + toHex(asm_span.code().size()) + ", bin]");
     y_Seg[2] = "[" + toHex(asm_span.code().size() + asm_span.data().size())+ "]";
 
     y_Node["segments"] = y_Seg;
-    std::ofstream f_yaml(name + "." + ver_str + ".yaml", std::ios::out);
+    std::ofstream f_yaml(name + "/" + name + "." + ver_str + ".yaml", std::ios::out);
     f_yaml << y_Node;
     f_yaml.close();
 
@@ -263,7 +263,7 @@ std::cout << "Writing files..." <<std::endl;
     y_Seg[seg_indx]["name"] =  "header";
     y_Seg[seg_indx]["type"] =  "header";
     y_Seg[seg_indx]["start"] =  toHex(0);
-    y_Seg[seg_indx++]["files"][0] = "[" + toHex(0) +", header, header]";
+    y_Seg[seg_indx++]["files"][0] = YAML::Load("[" + toHex(0) +", header, header]");
     
     y_Seg[seg_indx]["name"] =  "boot";
     y_Seg[seg_indx]["type"] =  "bin";
@@ -274,13 +274,13 @@ std::cout << "Writing files..." <<std::endl;
     y_Seg[seg_indx]["type"] =  "code";
     y_Seg[seg_indx]["start"] =  toHex(0x1000);
     y_Seg[seg_indx]["vram"] =  toHex(0x80000400);
-    y_Seg[seg_indx++]["files"][0] = "[" + toHex(0x1000) +", asm]";
+    y_Seg[seg_indx++]["files"][0] = YAML::Load("[" + toHex(0x1000) +", asm]");
     n64_span bk_boot = buffer.slice(0x1000, 0x4BE0);
 
     y_Seg[seg_indx]["name"] =  "assets";
     y_Seg[seg_indx]["type"] =  "bin";
     y_Seg[seg_indx]["start"] =  toHex(0x5E90);
-    y_Seg[seg_indx++]["files"][0] = "[" + toHex(0x5E90) +", bin, assets]";
+    y_Seg[seg_indx++]["files"][0] = YAML::Load("[" + toHex(0x5E90) +", bin, assets]");
 
         //snd1_ctl
     bk_asset_fs ass_fs(buffer(0x5E90));
@@ -296,8 +296,8 @@ std::cout << "Writing files..." <<std::endl;
     y_Seg[seg_indx]["name"] =  "soundfont1";
     y_Seg[seg_indx]["type"] =  "bin";
     y_Seg[seg_indx]["start"] =  toHex(snd1_ctl_offset);
-    y_Seg[seg_indx]["files"][0] = "[" + toHex(snd1_ctl_offset) +", bin, soundfont1.ctl]";
-    y_Seg[seg_indx++]["files"][1] = "[" + toHex(snd1_tbl_offset) +", bin, soundfont1.tbl]";
+    y_Seg[seg_indx]["files"][0] = YAML::Load("[" + toHex(snd1_ctl_offset) +", bin, soundfont1.ctl]");
+    y_Seg[seg_indx++]["files"][1] = YAML::Load("[" + toHex(snd1_tbl_offset) +", bin, soundfont1.tbl]");
 
     //find wavetable size from ctl;
     uint32_t wave_size = 0;
@@ -335,9 +335,9 @@ std::cout << "Writing files..." <<std::endl;
     uint32_t snd2_tbl_offset = snd2_ctl_offset + snd2_ctl_size;
     y_Seg[seg_indx]["name"] =  "soundfont2";
     y_Seg[seg_indx]["type"] =  "bin";
-    y_Seg[seg_indx]["start"] =  toHex(snd1_ctl_offset);
-    y_Seg[seg_indx]["files"][0] = "[" + toHex(snd2_ctl_offset) +", bin, soundfont2.ctl]";
-    y_Seg[seg_indx++]["files"][1] = "[" + toHex(snd2_tbl_offset) +", bin, soundfont2.tbl]";
+    y_Seg[seg_indx]["start"] =  toHex(snd2_ctl_offset);
+    y_Seg[seg_indx]["files"][0] = YAML::Load("[" + toHex(snd2_ctl_offset) + ", bin, soundfont2.ctl]");
+    y_Seg[seg_indx++]["files"][1] = YAML::Load("[" + toHex(snd2_tbl_offset) +", bin, soundfont2.tbl]");
 
     //snd2_tbl
     n64_span snd2_tbl_span = buffer.slice(snd2_tbl_offset, wave_size);
@@ -359,7 +359,7 @@ std::cout << "Writing files..." <<std::endl;
         uint32_t bk_core2_size = _from_inst(bk_boot, 0x17FE, 0x1826); 
         y_Seg[seg_indx]["name"] =  "core2." + ver_str + ".rzip";
         y_Seg[seg_indx]["type"] =  "bin";
-        y_Seg[seg_indx++]["start"] =  toHex(bk_core1_offset);
+        y_Seg[seg_indx++]["start"] =  toHex(bk_core2_offset);
         n64_span bk_core2 = buffer.slice(bk_core2_offset, bk_core2_size - bk_core2_offset);
         bk_asm core2(bk_core2);
         generate_code_splat("core2", ver_str, core2, _from_inst(core1.code(), 0x0E, 0x1A));
@@ -378,6 +378,8 @@ std::cout << "Writing files..." <<std::endl;
         level_ram = 0x80385610;
 
     //level overlays
+    std::map<uint32_t, YAML::Node> lvl_segs; //ordered map'
+    uint32_t lvl_end = 0;
     for(int i = 0; i < 0x0D; i++){
         uint32_t upper = level_asm_upper[i];
         uint32_t lower = upper + 0x28;
@@ -386,13 +388,31 @@ std::cout << "Writing files..." <<std::endl;
         std::string lvl_name = "level" + std::to_string(i);
         n64_span lvl_span = buffer.slice(bk_lvl_offset, bk_lvl_size - bk_lvl_offset);
         bk_asm lvl_asm(lvl_span);
-        y_Seg[seg_indx]["name"] =  lvl_name + "." + ver_str + ".rzip";
-        y_Seg[seg_indx]["type"] =  "bin";
-        y_Seg[seg_indx++]["start"] =  toHex(bk_lvl_offset);
+        YAML::Node lvl_node;
+        lvl_node["name"] =  lvl_name + "." + ver_str + ".rzip";
+        lvl_node["type"] =  "bin";
+        lvl_node["start"] =  toHex(bk_lvl_offset);
+        lvl_segs.insert_or_assign(bk_lvl_offset, lvl_node);
         generate_code_splat(lvl_name, ver_str, lvl_asm, level_ram);
+        lvl_end = std::max(lvl_end, bk_lvl_size);
     }
+    //order segments
+    for(const auto& [offset, n] : lvl_segs){
+        y_Seg[seg_indx++] = n;
+    }
+    while(lvl_end % 0x10) 
+        lvl_end++;    
 
-    y_Seg[seg_indx++] = "[" + toHex(rom_size) + "]";
+    uint8_t* trail_start = buffer.end()-1;
+    while(*trail_start == 0xFF)
+        trail_start--;
+    
+    y_Seg[seg_indx]["name"] =  "emptyLvl." + ver_str + ".rzip";
+    y_Seg[seg_indx]["type"] =  "bin";
+    y_Seg[seg_indx++]["start"] =  toHex(lvl_end);
+    generate_code_splat("emptyLvl", ver_str, bk_asm(buffer.slice(lvl_end, (size_t)trail_start-lvl_end)), level_ram);
+    
+    y_Seg[seg_indx++] = YAML::Load("[" + toHex(rom_size) + "]");
 
     y_Node["segments"] = y_Seg;
     std::ofstream f_yaml("banjo." + ver_str + ".yaml", std::ios::out);

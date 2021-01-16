@@ -7,24 +7,15 @@
 
 int main(int argc, char** argv){
     bool generate_splat_yaml;
-    std::string bin_path = "";
-    std::string out_path = "";
+    
 
-    //parse arguments
-    for(int i = 1; i < argc && i < 4; i++){
-        std::string argi= argv[i];
-        if(argi == "-y")
-            generate_splat_yaml = true;
-        else if(bin_path == "")
-            bin_path = argi;
-        else 
-            out_path = argi;
-    }
-
-    if(bin_path == "" || out_path == ""){
+    if(argc != 2){
         std::cout << "Incorrect syntex. bk_inflate_code [-y] <path/to/input.bin> <path/to/output.bin>" << std::endl;
         return 0;
     }
+
+    std::string bin_path = argv[1];
+    std::string out_path = argv[2];
 
     //try opening ROMS
     size_t lastindex = out_path.find_last_of("."); 
@@ -44,25 +35,6 @@ int main(int argc, char** argv){
     uint8_t* out_buffer = (uint8_t*) malloc(out_size);
     uint8_t* out_end = std::copy(file.code().begin(), file.code().end(), out_buffer); 
     out_end = std::copy(file.data().begin(), file.data().end(), out_end);
-
-    if(generate_splat_yaml){
-        YAML::Node splat;
-        
-        splat["basename"] = rawname;
-        splat["options"]["find_file_boundaries"] = true;
-        splat["options"]["compiler"] = "\"IDO\"";
-        splat["options"]["undefined_syms.us.v10.txt"] = "undefined_syms." + rawname + "txt";
-        splat["segments"][0]["name"] = "code";
-        splat["segments"][0]["type"] = "code";
-        splat["segments"][0]["start"] = 0;
-        splat["segments"][0]["files"] = 
-        splat["segments"][0]["name"] = "data";
-        splat["segments"][1]["start"] = file.code().size();
-
-        std::ofstream fout(rawname + ".yaml");
-        fout << splat;
-        fout.close();
-    }
 
     free(buffer);
     std::ofstream o_f(out_path);
