@@ -15,7 +15,7 @@ bk_extract bk_inflate_code bk_splat_yaml: LIBS = -lcrypto -ldeflate -lyaml-cpp
 bk_inflate_code: LIBS = -lcrypto -ldeflate -lyaml-cpp
 
 TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code bk_splat_yaml
-DEPEND = $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip
+DEPEND = $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip $(LIB_DIR)/libyaml-cpp.a
 SUBMODULES = libdeflate yaml-cpp gzip-1.2.4
 
 default: all
