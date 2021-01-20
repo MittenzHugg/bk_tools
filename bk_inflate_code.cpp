@@ -3,14 +3,12 @@
 #include <iostream>
 #include "bk_asm.hpp"
 #include "file_helper.hpp"
-#include "yaml-cpp/yaml.h"
 
 int main(int argc, char** argv){
-    bool generate_splat_yaml;
     
 
-    if(argc != 2){
-        std::cout << "Incorrect syntex. bk_inflate_code [-y] <path/to/input.bin> <path/to/output.bin>" << std::endl;
+    if(argc != 3){
+        std::cout << "Incorrect syntex. bk_inflate_code <path/to/input.bin> <path/to/output.bin>" << std::endl;
         return 0;
     }
 
