@@ -14,18 +14,18 @@ LIBS = -ldeflate
 bk_extract bk_splat_yaml: LIBS = -lcrypto -ldeflate -lyaml-cpp
 bk_inflate_code: LIBS = -lcrypto -ldeflate
 
-TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code bk_splat_yaml
+TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code
 DEPEND = $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip $(LIB_DIR)/libyaml-cpp.a
 SUBMODULES = libdeflate yaml-cpp gzip-1.2.4
 
 default: all
-all: $(TARGETS)
-
-bk_splat_yaml: $(DEPEND) $(OBJS) $(LIB_DIR)/libyaml-cpp.a
-	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS) -Iyaml-cpp/include
+all: $(TARGETS) bk_splat_yaml
 
 $(TARGETS): $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip $(OBJS)
 	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
+
+bk_splat_yaml: $(DEPEND) $(OBJS) $(LIB_DIR)/libyaml-cpp.a
+	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS) -Iyaml-cpp/include
 
 clean:
 	rm -f *.o

@@ -18,23 +18,24 @@ int main(int argc, char** argv){
     std::ifstream c_s(c_path, std::ios::in | std::ios::binary | std::ios::ate);
     uint32_t c_size = c_s.tellg();
     size_t final_c = c_size;
-    uint8_t *c_buffer = (uint8_t *)malloc(c_size);
+    //while(final_c & 0xF){final_c++;};
+    uint8_t *c_buffer = (uint8_t *)malloc(final_c);
     
-    n64_span c_span(c_buffer, c_size); 
+    n64_span c_span(c_buffer, final_c); 
     c_s.seekg(0);
-	c_s.read((char*)c_buffer + 6, c_size);
+	c_s.read((char*)c_buffer, c_size);
 	c_s.close(); 
 
     std::ifstream d_s(d_path, std::ios::in | std::ios::binary | std::ios::ate);
     uint32_t d_size = d_s.tellg();
-    uint8_t *d_buffer = (uint8_t *)malloc(d_size);
-    n64_span d_span(d_buffer, d_size); 
+    size_t final_d = d_size;
+    while(final_d & 0xF)
+        final_d++;
+    uint8_t *d_buffer = (uint8_t *)malloc(final_d);
+    n64_span d_span(d_buffer, final_d); 
     d_s.seekg(0);
-	d_s.read((char*)d_buffer + 6, d_size);
+	d_s.read((char*)d_buffer, d_size);
 	d_s.close(); 
-
-    std::cout << "code size: " << std::to_string(c_size) << std::endl;
-    std::cout << "data size: " << std::to_string(d_size) << std::endl;
 
     bk_asm assembly(c_span, d_span);
     span_write(assembly.compressed(), o_path);

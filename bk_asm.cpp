@@ -123,7 +123,7 @@ void bk_asm::_comp_method(int lvl) const{
     uint32_t data_comp_size = odataf_s.tellg();
 
     size_t finalSize = code_comp_size + 6 + data_comp_size + 6;
-    while(finalSize & 0x7) finalSize++;
+    while(finalSize & 0xF) finalSize++;
 
     _comp_buff = (uint8_t*) malloc(finalSize);
 
@@ -141,9 +141,6 @@ void bk_asm::_comp_method(int lvl) const{
     odataf_s.seekg(0);
 	odataf_s.read((char*)_comp_buff + code_comp_size + 12, data_comp_size);
 	odataf_s.close();
-
-    std::cout << "code z_size: " << std::to_string(code_comp_size) << std::endl;
-    std::cout << "data z_size: " << std::to_string(data_comp_size) << std::endl;
 
     for(int i = code_comp_size + 6 + data_comp_size + 6; i < finalSize; i++){
         _comp_span->set<uint8_t>(0x00,i);
