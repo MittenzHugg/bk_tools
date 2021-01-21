@@ -4,11 +4,14 @@
 class bk_asm{
     public:
         bk_asm(const n64_span& span);
+        bk_asm(const n64_span& code_span, const n64_span& data_span);
         ~bk_asm(void);
         const n64_span& code(void) const;
         const n64_span& data(void) const;
+        const n64_span& compressed(int lvl = 6);
 
     private:
+        void _comp_method(int lvl) const;
         mutable n64_span *_comp_span = nullptr;
         mutable uint8_t *_comp_buff = nullptr;
 

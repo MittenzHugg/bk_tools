@@ -24,7 +24,7 @@ all: $(TARGETS)
 bk_splat_yaml: $(DEPEND) $(OBJS) $(LIB_DIR)/libyaml-cpp.a
 	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS) -Iyaml-cpp/include
 
-$(TARGETS): $(DEPEND) $(OBJS)
+$(TARGETS): $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip $(OBJS)
 	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
 
 clean:
