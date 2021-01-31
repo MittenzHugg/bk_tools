@@ -6,7 +6,7 @@ endif
 CXX = g++
 CXXFLAGS = -std=c++2a
 
-SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp
+SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp bk_sprite.cpp bk_textures.cpp gif.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 LIB_DIR = lib
@@ -20,6 +20,9 @@ bk_extract: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
 
 bk_assets_build: $(LIB_DIR)/libdeflate.a gzip_1_2_4 $(OBJS)
 	g++ -o bk_assets_build bk_assets_build.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) -ldeflate
+
+bk_sprite2gif: $(OBJS)
+	g++ -o $@ $@.cpp $(OBJS) $(CXXFLAGS) -L$(LIB_DIR) $(LIBS)
 
 clean:
 	rm -f *.o
