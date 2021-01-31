@@ -62,6 +62,7 @@ public:
 	}
 
 	inline const n64_span slice(uint32_t offset, size_t size = -1) const{
+		size_t _size = (size == -1) ? this->size() - offset : size;
 		return n64_span(_begin + offset, size);
 	}
 
