@@ -1,5 +1,12 @@
 gzip_1_2_4
 bk_extract
+bk_assets_extract
+bk_assets_build
+bk_deflate_code
+bk_inflate_code
+bk_splat_yaml
+bk_sprite2gif
+*.gif
 *.z64
 *.n64
 *.v64
