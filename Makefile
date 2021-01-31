@@ -13,8 +13,9 @@ LIB_DIR = lib
 LIBS = -ldeflate
 bk_extract bk_splat_yaml: LIBS = -lcrypto -ldeflate -lyaml-cpp
 bk_inflate_code: LIBS = -lcrypto -ldeflate
+bk_sprite2gif: LIBS = -ldeflate
 
-TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code
+TARGETS = bk_extract bk_assets_build bk_deflate_code bk_inflate_code bk_sprite2gif
 DEPEND = $(LIB_DIR)/libdeflate.a gzip-1.2.4/gzip $(LIB_DIR)/libyaml-cpp.a
 SUBMODULES = libdeflate yaml-cpp gzip-1.2.4
 
