@@ -9,3 +9,9 @@ extracts and decompresses all bins for all versions of Banjo-Kazooie
 **bk_assets_build:**  
 creates assets.bin from uncompressed assets  
 *</path/to/output/bin/dir> </path/to/uncompressed/assets/dir>* : 
+
+**bk_sprite2gif:**  
+creates gif from bk_sprites
+*[options] </path/to/sprite/bin> </path/to/gif_file>* : 
+* -n | --no-loop* : create nonlooping GIF  
+* (-f | --framerate) <float>* : set framerate in fps (default = 30)  
