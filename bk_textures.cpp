@@ -79,3 +79,107 @@ bk_ci4::bk_ci4(const n64_span& span){
         chunk_offset += 0x8 + chunk_w*chunk_h;
     }
 }
+
+bk_rgba16::bk_rgba16(const n64_span& span){
+    _width = span.get<uint16_t>(4);
+    _height = span.get<uint16_t>(6);
+    uint16_t _chunk_cnt = span.get<uint16_t>(8);
+    _pixel_data.resize(_width* _height, {0x0, 0x00, 0x00,0x00});
+    std::cout << " w: " << _width; 
+    std::cout << " h: " << _height; 
+    std::cout << std::endl << std::flush;
+
+    uint32_t chunk_offset = 0x14;
+    for(int ci = 0; ci < _chunk_cnt; ci++){
+        std::cout << "chunk " << ci << ":"; 
+        int16_t chunk_x = span.get<int16_t>(chunk_offset);
+        int16_t chunk_y = span.get<int16_t>(chunk_offset + 2);
+        int16_t chunk_w = span.get<int16_t>(chunk_offset + 4);
+        int16_t chunk_h = span.get<int16_t>(chunk_offset + 6);
+
+        chunk_offset +=8;
+        while(chunk_offset & 0x07){chunk_offset++;}
+
+        std::cout << " x: " << chunk_x; 
+        std::cout << " y: " << chunk_y; 
+        std::cout << " w: " << chunk_w; 
+        std::cout << " h: " << chunk_h; 
+        std::cout << std::endl << std::flush;
+        std::vector<uint16_t>pxl_raw = span.to_vector<uint16_t>(chunk_offset, chunk_w*chunk_h);
+        std::vector<rgba32_t>ch_pxls;
+        ch_pxls.reserve(chunk_w*chunk_h);
+        std::transform(pxl_raw.begin(), pxl_raw.end(), std::back_inserter(ch_pxls),
+            [&](uint16_t val)-> rgba32_t{
+                rgba32_t color;
+                color.r = (val >> 8) & 0x00F8;
+                color.r |= (color.r & 0x0080)? 0x07: 0x0;
+
+                color.g = (val >> 3) & 0x00F8;
+                color.g |= (color.g & 0x0080)? 0x07: 0x0;
+
+                color.b = (val << 2) & 0x00F8;
+                color.b |= (color.b & 0x0080)? 0x07: 0x0;
+
+                color.a = (val & 0x0001)? 0xFF: 0x0;
+                return color;
+            }
+        );
+    
+        //auto row = ch_pxls.begin();
+        //std::copy(row, row + chunk_w, _pixel_data.begin() + (chunk_x));
+        for(int i = 0; i < chunk_h; i++){
+           auto row = ch_pxls.begin() + i*chunk_w;
+           std::copy(row, row + chunk_w, _pixel_data.begin() + (chunk_x) + (chunk_y + i)*_width);
+        }
+        chunk_offset += 0x8 + chunk_w*chunk_h*sizeof(uint16_t);
+    }
+} 
+
+bk_rgba32::bk_rgba32(const n64_span& span){
+    _width = span.get<uint16_t>(4);
+    _height = span.get<uint16_t>(6);
+    uint16_t _chunk_cnt = span.get<uint16_t>(8);
+    _pixel_data.resize(_width* _height, {0x0, 0x00, 0x00,0x00});
+    std::cout << " w: " << _width; 
+    std::cout << " h: " << _height; 
+    std::cout << std::endl << std::flush;
+
+    uint32_t chunk_offset = 0x14;
+    for(int ci = 0; ci < _chunk_cnt; ci++){
+        std::cout << "chunk " << ci << ":"; 
+        int16_t chunk_x = span.get<int16_t>(chunk_offset);
+        int16_t chunk_y = span.get<int16_t>(chunk_offset + 2);
+        int16_t chunk_w = span.get<int16_t>(chunk_offset + 4);
+        int16_t chunk_h = span.get<int16_t>(chunk_offset + 6);
+        
+        chunk_offset +=8;
+        while(chunk_offset & 0x07){chunk_offset++;}
+
+        std::cout << " x: " << chunk_x; 
+        std::cout << " y: " << chunk_y; 
+        std::cout << " w: " << chunk_w; 
+        std::cout << " h: " << chunk_h; 
+        std::cout << std::endl << std::flush;
+        std::vector<uint32_t>pxl_raw = span.to_vector<uint32_t>(chunk_offset, chunk_w*chunk_h);
+        std::vector<rgba32_t>ch_pxls;
+        ch_pxls.reserve(chunk_w*chunk_h);
+        std::transform(pxl_raw.begin(), pxl_raw.end(), std::back_inserter(ch_pxls),
+            [&](uint32_t val)-> rgba32_t{
+                rgba32_t color;
+                color.r = (val >> 24) & 0x00FF;
+                color.g = (val >> 16) & 0x00FF;
+                color.b = (val << 8) & 0x00FF;
+                color.a = val & 0x00FF;
+                return color;
+            }
+        );
+    
+        //auto row = ch_pxls.begin();
+        //std::copy(row, row + chunk_w, _pixel_data.begin() + (chunk_x));
+        for(int i = 0; i < chunk_h; i++){
+           auto row = ch_pxls.begin() + i*chunk_w;
+           std::copy(row, row + chunk_w, _pixel_data.begin() + (chunk_x) + (chunk_y + i)*_width);
+        }
+        chunk_offset += chunk_w*chunk_h*sizeof(uint32_t);
+    }
+} 

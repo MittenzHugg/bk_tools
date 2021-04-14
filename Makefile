@@ -6,7 +6,7 @@ endif
 CXX = g++
 CXXFLAGS = -std=c++2a
 
-SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp bk_sprite.cpp bk_textures.cpp gif.cpp
+SRCS = bk_asm.cpp bk_asset.cpp file_helper.cpp bk_sprite.cpp bk_textures.cpp gif.cpp apng.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 LIB_DIR = lib

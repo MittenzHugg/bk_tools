@@ -24,6 +24,8 @@ bk_sprite::bk_sprite(const n64_span& span){
         std::cout << "format: RGBA16 " << std::endl;
     } else if(_format == RGBA32){
         std::cout << "format: RGBA32 " << std::endl;
+    } else {
+        std::cout << "unknownformat: " << _format << std::endl;
     }
 }
 
@@ -59,5 +61,30 @@ gif bk_sprite::toGIF(void){
     }
     giffy.set_background_color(alpha);
     giffy.set_dimension(max_height, max_width);
+    return giffy;
+}
+
+apng bk_sprite::toAPNG(void){
+    apng giffy;
+    uint16_t alpha = 0;
+    uint32_t max_height = 0;
+    uint32_t max_width = 0;
+    if(_format == RGBA16){
+        for(n64_span& _f_span : _frame_data){
+            bk_rgba16 tmp(_f_span);
+            int curr_frame = giffy.add_frame(tmp._pixel_data, tmp._width, tmp._height);
+            max_width = std::max(max_width, tmp._width);
+            max_height = std::max(max_height, tmp._height);
+        }
+    }
+    if(_format == RGBA32){
+        for(n64_span& _f_span : _frame_data){
+            bk_rgba32 tmp(_f_span);
+            int curr_frame = giffy.add_frame(tmp._pixel_data, tmp._width, tmp._height);
+            max_width = std::max(max_width, tmp._width);
+            max_height = std::max(max_height, tmp._height);
+        }
+    }
+    giffy.set_dimension(max_width, max_height);
     return giffy;
 }

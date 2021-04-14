@@ -66,10 +66,21 @@ int main(int argc, char** argv){
 
     bk_sprite sprite(buffer);
 
-	gif giffy = sprite.toGIF();
-	giffy.set_infinite_loop(loop);
-	giffy.set_delay((uint16_t) (100.0f/framerate));
-	giffy.write(out_p);
+	if(sprite._format == CI4 || sprite._format == CI8){ 
+		gif giffy = sprite.toGIF();
+		giffy.set_infinite_loop(loop);
+		giffy.set_delay((uint16_t) (100.0f/framerate));
+		giffy.write(out_p);
+	} else if (sprite._format == RGBA16 || sprite._format == RGBA32){
+		std::cout << "Format not gif compatible. Exporting to APNG" << std::endl;
+		apng apngy = sprite.toAPNG();
+		if(!loop)
+			apngy.set_loop_count(1);
+		apngy.set_delay((uint16_t) (100.0f/framerate));
+		apngy.write(out_p);
+	}else{
+		std::cout << "Don't know how to handle format" << std::endl;
+	}
 
 	return 0;
 }
