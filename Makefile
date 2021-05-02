@@ -65,7 +65,7 @@ yaml-cpp/build:
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
 
-.cpp.o:
+%.o : %.cpp 
 	$(CXX) $(CXXFLAGS) -c $<  -o $@
 
 %_clean:
