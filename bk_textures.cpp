@@ -135,10 +135,11 @@ bk_rgba16::bk_rgba16(const n64_span& span){
     }
 } 
 
-bk_rgba32::bk_rgba32(const n64_span& span){
-    _width = span.get<uint16_t>(4);
-    _height = span.get<uint16_t>(6);
+bk_rgba32::bk_rgba32(const n64_span& span, bool explode){
+    _width = explode ? 32 :span.get<uint16_t>(4);
+    _height = explode ? 32 : span.get<uint16_t>(6);
     uint16_t _chunk_cnt = span.get<uint16_t>(8);
+    if(explode) _width *= _chunk_cnt;
     _pixel_data.resize(_width* _height, {0x0, 0x00, 0x00,0x00});
     std::cout << " w: " << _width; 
     std::cout << " h: " << _height; 
@@ -147,14 +148,13 @@ bk_rgba32::bk_rgba32(const n64_span& span){
     uint32_t chunk_offset = 0x14;
     for(int ci = 0; ci < _chunk_cnt; ci++){
         std::cout << "chunk " << ci << ":"; 
-        int16_t chunk_x = span.get<int16_t>(chunk_offset);
-        int16_t chunk_y = span.get<int16_t>(chunk_offset + 2);
+        int16_t chunk_x = (explode) ? 32*ci : span.get<int16_t>(chunk_offset);
+        int16_t chunk_y = explode ? 0 : span.get<int16_t>(chunk_offset + 2);
         int16_t chunk_w = span.get<int16_t>(chunk_offset + 4);
         int16_t chunk_h = span.get<int16_t>(chunk_offset + 6);
         
         chunk_offset +=8;
         while(chunk_offset & 0x07){chunk_offset++;}
-
         std::cout << " x: " << chunk_x; 
         std::cout << " y: " << chunk_y; 
         std::cout << " w: " << chunk_w; 

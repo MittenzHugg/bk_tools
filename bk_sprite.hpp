@@ -13,8 +13,8 @@ enum sprite_txtr_frmt{
 class bk_sprite{
     public:
         bk_sprite(const n64_span& span);
-        gif toGIF(void);
-        apng toAPNG(void);
+        gif toGIF(bool explode);
+        apng toAPNG(bool explode);
         sprite_txtr_frmt _format;
     private:
         uint16_t _frame_cnt;
@@ -24,4 +24,3 @@ class bk_sprite{
         std::vector<n64_span> _frame_data;
         n64_span _data;
 };
-

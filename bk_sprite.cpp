@@ -29,7 +29,7 @@ bk_sprite::bk_sprite(const n64_span& span){
     }
 }
 
-gif bk_sprite::toGIF(void){
+gif bk_sprite::toGIF(bool explode){
     gif giffy;
     uint16_t alpha = 0;
     uint32_t max_height = 0;
@@ -64,7 +64,7 @@ gif bk_sprite::toGIF(void){
     return giffy;
 }
 
-apng bk_sprite::toAPNG(void){
+apng bk_sprite::toAPNG(bool explode){
     apng giffy;
     uint16_t alpha = 0;
     uint32_t max_height = 0;
@@ -79,7 +79,7 @@ apng bk_sprite::toAPNG(void){
     }
     if(_format == RGBA32){
         for(n64_span& _f_span : _frame_data){
-            bk_rgba32 tmp(_f_span);
+            bk_rgba32 tmp(_f_span, explode);
             int curr_frame = giffy.add_frame(tmp._pixel_data, tmp._width, tmp._height);
             max_width = std::max(max_width, tmp._width);
             max_height = std::max(max_height, tmp._height);
