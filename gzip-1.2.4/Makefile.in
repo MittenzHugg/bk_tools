@@ -154,7 +154,7 @@ DISTFILES = $(GENFILES) $(sampleFILES) $(msdosFILES) $(os2FILES) $(ntFILES)\
 
 SCRIPTS = $(G)zdiff $(G)zgrep $(G)zmore $(G)znew $(G)zforce gzexe
 
-.c$O:
+%.o: %.c
 	$(CC) -c $(DEFS) $(CFLAGS) $<
 
 #.PHONY: default all force test check
