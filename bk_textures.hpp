@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include "gif.hpp"
+#include "apng.hpp"
 
 
 class bk_ci8{
@@ -23,4 +24,26 @@ class bk_ci4{
         std::vector<uint8_t> _pixel_data;
         uint8_t _transparent_index = 0;
         
+<<<<<<< HEAD
+};
+
+class bk_rgba16{
+    public:
+        bk_rgba16(const n64_span& span); 
+        uint32_t _width;
+        uint32_t _height;
+        std::vector<rgba_t> _pixel_data;
+        uint8_t _transparent_index = 0;
+        
+};
+
+class bk_rgba32{
+    public:
+        bk_rgba32(const n64_span& span, bool explode); 
+        uint32_t _width;
+        uint32_t _height;
+        std::vector<rgba_t> _pixel_data;
+        uint8_t _transparent_index = 0;
+=======
+>>>>>>> origin/master
 };

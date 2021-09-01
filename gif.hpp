@@ -71,10 +71,10 @@ class gif{
         }
 
         inline void set_frame_transparency(int frame_indx, uint8_t color_indx){
-            /*if(_frames[frame_indx].gfx_ctl == NULL)
+            if(_frames[frame_indx].gfx_ctl == NULL)
                 _frames[frame_indx].gfx_ctl = new _graphic_control_extension;
             _frames[frame_indx].gfx_ctl->transparent_color_flag = 1;
-            _frames[frame_indx].gfx_ctl->transparent_color_index = color_indx;*/
+            _frames[frame_indx].gfx_ctl->transparent_color_index = color_indx;
         }
 
         inline int frame_count(void){ 

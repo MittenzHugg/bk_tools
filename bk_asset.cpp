@@ -20,9 +20,7 @@ bk_asset_meta::~bk_asset_meta(){
 }
 
 bk_asset_meta& bk_asset_meta::operator=(const n64_span& other){
-    offset = other(0x00);
-    comp = other(0x04);
-    type = other(0x06);
+    other.get(offset, size, comp, type);
     size = (type == 4)? 0 : static_cast<uint32_t>(other(0x08)) - offset;
     return *this;
 }
