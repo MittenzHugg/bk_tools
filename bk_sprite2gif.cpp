@@ -8,7 +8,10 @@
 int main(int argc, char** argv){
 	bool loop = true;
 	bool optimize = false;
+<<<<<<< HEAD
 	bool explode = false;
+=======
+>>>>>>> origin/master
 	float  framerate = 30.0f;
 
 	if(argc < 3){
@@ -16,7 +19,10 @@ int main(int argc, char** argv){
 		std::cout << "Options:" << std::endl;
 		std::cout << "-n | --no-loop : non-looping gif" <<std::endl;
 		std::cout << "(-f | --framerate) <float> : set framerate in fps. (default 30 fps)" <<std::endl;
+<<<<<<< HEAD
 		std::cout << "-e : explode parts to frames" << std::endl;
+=======
+>>>>>>> origin/master
 		//std::cout << "-o --optimize : optimize gif size" << std::endl;
         return 1;
     }
@@ -42,9 +48,12 @@ int main(int argc, char** argv){
 				std::cerr << "Number out of range: " << argi << '\n';
 			}
 		}
+<<<<<<< HEAD
 		else if(argi == "-e"){
 			explode = true;
 		}
+=======
+>>>>>>> origin/master
 			
 	}
     

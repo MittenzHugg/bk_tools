@@ -69,7 +69,11 @@ $(LIB_DIR)/libyaml-cpp.a: $(LIB_DIR) yaml-cpp/build/libyaml-cppa.a
 	cp -f yaml-cpp/build/libyaml-cpp.a $(LIB_DIR)
 
 yaml-cpp/build/libyaml-cppa.a: yaml-cpp/build yaml-cpp/build/Makefile
+<<<<<<< HEAD
 	cd yaml-cpp/build && make CXX=$(CXX); CXXFLAGS=-std=c++2a
+=======
+	cd yaml-cpp/build && make
+>>>>>>> origin/master
 
 yaml-cpp/build/Makefile:
 	cd yaml-cpp/build && cmake ..
@@ -80,11 +84,20 @@ yaml-cpp/build:
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
 
+<<<<<<< HEAD
 %.o:%.cpp
 	$(CXX) $(CXXFLAGS) -c $<  -o $@ -I$(INCLUDE_DIR) -I.
 
 %_clean:
 	cd $* && make clean
 
+=======
+%.o : %.cpp 
+	$(CXX) $(CXXFLAGS) -c $<  -o $@
+
+%_clean:
+	cd $* && make clean
+
+>>>>>>> origin/master
 yaml-cpp_clean:
 	cd yaml-cpp && rm -rf build

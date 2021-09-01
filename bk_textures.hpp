@@ -24,6 +24,7 @@ class bk_ci4{
         std::vector<uint8_t> _pixel_data;
         uint8_t _transparent_index = 0;
         
+<<<<<<< HEAD
 };
 
 class bk_rgba16{
@@ -43,4 +44,6 @@ class bk_rgba32{
         uint32_t _height;
         std::vector<rgba_t> _pixel_data;
         uint8_t _transparent_index = 0;
+=======
+>>>>>>> origin/master
 };

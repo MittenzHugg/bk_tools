@@ -9,7 +9,11 @@ bk_sprite::bk_sprite(const n64_span& span){
     std::cout << "frames: " << _frame_cnt << std::endl;
     _format = static_cast<sprite_txtr_frmt>(span.get<uint16_t>(2));
     _unk4_unk10 = span.slice(0x04, 0x10-0x04);
+<<<<<<< HEAD
     _frame_adr = span(0x10).get<std::vector<uint32_t>>(_frame_cnt);
+=======
+    _frame_adr = span.to_vector<uint32_t>(0x10,_frame_cnt);
+>>>>>>> origin/master
     //seperate header from image data
     _data = span.slice(0x10 + _frame_cnt*sizeof(uint32_t));
     _frame_adr.push_back(_data.size());
@@ -24,12 +28,19 @@ bk_sprite::bk_sprite(const n64_span& span){
         std::cout << "format: RGBA16 " << std::endl;
     } else if(_format == RGBA32){
         std::cout << "format: RGBA32 " << std::endl;
+<<<<<<< HEAD
     } else {
         std::cout << "unknownformat: " << _format << std::endl;
     }
 }
 
 gif bk_sprite::toGIF(bool explode){
+=======
+    }
+}
+
+gif bk_sprite::toGIF(void){
+>>>>>>> origin/master
     gif giffy;
     uint16_t alpha = 0;
     uint32_t max_height = 0;
