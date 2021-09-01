@@ -7,7 +7,7 @@
 
 #include "json.hpp"
 
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 
 using json = nlohmann::json;
 
@@ -17,12 +17,11 @@ typedef uint8_t  ALPan;
 class ALEnvelope{
 public:
     ALEnvelope(const n64_span & file, const uint32_t offset){
-        uint32_t pos = offset;
-        attackTime = file.seq_get<ALMicroTime>(pos);
-        decayTime = file.seq_get<ALMicroTime>(pos);
-        releaseTime = file.seq_get<ALMicroTime>(pos);
-        attackVolume = file.seq_get<uint8_t>(pos);
-        decayVolume = file.seq_get<uint8_t>(pos);
+        file(offset).get(
+            attackTime, decayTime, releaseTime, 
+            attackVolume, decayVolume
+        );
+
     }
     ALMicroTime attackTime;
     ALMicroTime decayTime;
@@ -34,8 +33,7 @@ public:
 class ALSound{
 public:
     ALSound(const n64_span & file, const uint32_t offset){
-        uint32_t pos = offset;
-        uint32_t env_offset = file.seq_get<uint32_t>(pos);
+        uint32_t env_offset = file(offset);
         if(env_offset){
             envelope = new ALEnvelope(file, env_offset);
         }
@@ -47,24 +45,16 @@ public:
 class ALInstrument{
 public:
     ALInstrument(const n64_span & file, const uint32_t offset){
-        uint32_t pos = offset;
-        volume = file.seq_get<uint8_t>(pos);
-        pan = file.seq_get<uint8_t>(pos);
-        priority = file.seq_get<uint8_t>(pos);
-        flags = file.seq_get<uint8_t>(pos);
-        tremType = file.seq_get<uint8_t>(pos);
-        tremRate = file.seq_get<uint8_t>(pos);
-        tremDepth = file.seq_get<uint8_t>(pos);
-        tremDelay = file.seq_get<uint8_t>(pos);
-        vibType = file.seq_get<uint8_t>(pos);
-        vibRate = file.seq_get<uint8_t>(pos);
-        vibDepth = file.seq_get<uint8_t>(pos);
-        vibDelay = file.seq_get<uint8_t>(pos);
-        bendRange = file.seq_get<int16_t>(pos);
-        soundCount = file.seq_get<int16_t>(pos);
+        uint32_t pos = file(offset).get( 
+            volume,     pan,        priority, 
+            flags,      tremType,   tremRate,
+            tremDepth,  tremDelay,  vibType,
+            vibDepth,   vibDelay,   bendRange,
+            soundCount
+        );
 
         auto sound_const = [&](uint32_t offs){return ALSound(file, offs);};
-        std::vector<uint32_t> soundOffsets = file.to_vector<uint32_t>(pos, soundCount);
+        std::vector<uint32_t> soundOffsets = file(pos).get<std::vector<uint32_t>>(soundCount);
         soundArray.reserve(soundCount);
         std::transform(soundOffsets.begin(), soundOffsets.end(), soundArray.begin(),
             sound_const
@@ -91,19 +81,15 @@ public:
 class ALBank{
 public:
     ALBank(const n64_span & file, const uint32_t offset){
-        uint32_t pos = offset;
-        instCount = file.seq_get<int16_t>(pos);
-        flags = file.seq_get<uint8_t>(pos);
-        pad = file.seq_get<uint8_t>(pos);
-        sampleRate = file.seq_get<int32_t>(pos);
+        uint32_t percOffset;
+        uint32_t pos = file(offset).get(instCount, flags, pad, sampleRate, percOffset);
+        std::vector<uint32_t> instOffsets = file(offset + pos).get<std::vector<uint32_t>>(instCount);
 
         auto inst_const = [&](uint32_t offs){return ALInstrument(file, offs);};
-        uint32_t percOffset = file.seq_get<uint32_t>(pos);
         if(percOffset){
-            percussion = inst_const(percOffset);
+            percussion = ALInstrument(file, percOffset);
         }
 
-        std::vector<uint32_t> instOffsets = file.to_vector<uint32_t>(pos, instCount);
         instArray.reserve(instCount);
         std::transform(instOffsets.begin(), instOffsets.end(), instArray.begin(),
             inst_const
@@ -121,10 +107,8 @@ public:
 class ALBankFile{
 public:
     ALBankFile(const n64_span & rom, const uint32_t offset){
-        uint32_t pos = offset;
-        revision = rom.seq_get<int16_t>(pos);
-        bankCount = rom.seq_get<int16_t>(pos);
-        bankOffsetArray = rom.to_vector<uint32_t>(pos, bankCount);
+        revision = rom.get(revision, bankCount);
+        bankOffsetArray = rom(0x4).get<std::vector<uint32_t>>(bankCount);
 
         uint32_t _end = *std::max(bankOffsetArray.begin(), bankOffsetArray.end());
         uint32_t inst_cnt = rom.get<int16_t>(offset + _end);

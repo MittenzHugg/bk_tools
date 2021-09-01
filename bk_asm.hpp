@@ -1,4 +1,4 @@
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include "libdeflate/libdeflate.h"
 
 class bk_asm{

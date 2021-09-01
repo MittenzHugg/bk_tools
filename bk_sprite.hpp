@@ -1,5 +1,5 @@
 #pragma once
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include "gif.hpp"
 #include "apng.hpp"
 

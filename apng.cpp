@@ -9,7 +9,7 @@
 #include "apng.hpp"
 #include "libdeflate.h"
 
-int apng::add_frame(const std::vector<rgba32_t>& img, uint16_t w, uint16_t h){
+int apng::add_frame(const std::vector<rgba_t>& img, uint16_t w, uint16_t h){
     _apng_frame tmp;
     tmp.ctl.width = w;
     tmp.ctl.height = h;
@@ -48,7 +48,7 @@ void apng::write(std::string file_path){
 
 uint32_t apng::_crc(const n64_span& span){
     uint32_t crc = 0xFFFFFFFF;
-    std::vector<uint8_t> bytes = span.to_vector<uint8_t>();
+    std::vector<uint8_t> bytes = span.get<std::vector<uint8_t>>(span.size()/sizeof(uint8_t));
     for( uint8_t b : bytes){
         uint32_t code = (crc ^ (uint32_t) b) & 0xff;
         for(int i = 0; i< 8; i++){

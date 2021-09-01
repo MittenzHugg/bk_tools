@@ -3,7 +3,7 @@
 #ifndef _BK_ASSET_
 #define _BK_ASSET_
 
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include<map>
 #include<string>
 

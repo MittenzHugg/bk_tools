@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include "gif.hpp"
 #include "apng.hpp"
 
@@ -31,7 +31,7 @@ class bk_rgba16{
         bk_rgba16(const n64_span& span); 
         uint32_t _width;
         uint32_t _height;
-        std::vector<rgba32_t> _pixel_data;
+        std::vector<rgba_t> _pixel_data;
         uint8_t _transparent_index = 0;
         
 };
@@ -41,6 +41,6 @@ class bk_rgba32{
         bk_rgba32(const n64_span& span, bool explode); 
         uint32_t _width;
         uint32_t _height;
-        std::vector<rgba32_t> _pixel_data;
+        std::vector<rgba_t> _pixel_data;
         uint8_t _transparent_index = 0;
 };

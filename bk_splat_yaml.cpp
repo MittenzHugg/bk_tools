@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <openssl/md5.h>
-#include "n64_span.h"
+#include "n64/n64_span.hpp"
 #include <cstdint>
 #include "bk_asset.hpp"
 #include "bk_asm.hpp"

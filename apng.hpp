@@ -7,8 +7,9 @@
 #include <vector>
 #include <string>
 
-#include "n64_span.h" //big-endian handler
+#include "n64/n64_span.hpp" //big-endian handler
 #include "libdeflate.h" //libdeflate_zlib_compress()
+#include "pixel_types.hpp"
 
 enum APNG_DISPOSE_OP{
     NONE,
@@ -21,14 +22,6 @@ enum APNG_BLEND_OP{
     OVER
 };
 
-struct rgba32_t
-{
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
-};
-
 class apng{
     public:
         inline void set_dimension(uint16_t w, uint16_t h){
@@ -36,13 +29,13 @@ class apng{
             _IHDR.height = h;
         };
 
-        int add_frame(const std::vector<rgba32_t>& img, uint16_t w, uint16_t h);
+        int add_frame(const std::vector<rgba_t>& img, uint16_t w, uint16_t h);
 
         inline void set_loop_count(uint32_t cnt){
             _acTL.num_plays = cnt;
         }
 
-        inline void set_still(const std::vector<rgba32_t>& img){
+        inline void set_still(const std::vector<rgba_t>& img){
             _IDAT.data = img;
             _still = true;
         }
@@ -111,7 +104,7 @@ class apng{
         struct fdAT{ //frame data
             void write(std::ofstream& of, uint32_t w, int &seq_num);
             std::array<char, 4> type = {'f', 'd', 'A', 'T'};
-            std::vector<rgba32_t> data;
+            std::vector<rgba_t> data;
         };
 
         struct _apng_frame{

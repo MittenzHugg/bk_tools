@@ -7,7 +7,7 @@ bk_ci8::bk_ci8(const n64_span& span){
     //read in pallette
     //head of 0x18
 
-    std::vector<uint16_t>pal_raw = span.to_vector<uint16_t>(0x18, 256);
+    std::vector<uint16_t>pal_raw = span(0x18).get<std::vector<uint16_t>>(256);
     std::transform(pal_raw.begin(), pal_raw.end(), std::back_inserter(_palette),
         [&](uint16_t val)-> rgb8_t{
             rgb8_t color;
@@ -29,7 +29,7 @@ bk_ci8::bk_ci8(const n64_span& span){
         int16_t chunk_y = span.get<int16_t>(chunk_offset + 2);
         int16_t chunk_w = span.get<int16_t>(chunk_offset + 4);
         int16_t chunk_h = span.get<int16_t>(chunk_offset + 6);
-        std::vector<uint8_t> tmp = span.to_vector<uint8_t>(chunk_offset + 0x8, chunk_w*chunk_h);
+        std::vector<uint8_t> tmp = span(chunk_offset + 0x8).get<std::vector<uint8_t>>(chunk_w*chunk_h);
     
         for(int i = 0; i < chunk_h; i++){
             auto row = tmp.begin() + i*chunk_w;
@@ -43,7 +43,7 @@ bk_ci4::bk_ci4(const n64_span& span){
     //read in pallette
     //head of 0x18
 
-    std::vector<uint16_t>pal_raw = span.to_vector<uint16_t>(0x18, 16);
+    auto pal_raw = span(0x18).get<std::vector<uint16_t>>(16);
     std::transform(pal_raw.begin(), pal_raw.end(), std::back_inserter(_palette),
         [&](uint16_t val)-> rgb8_t{
             rgb8_t color;
@@ -66,7 +66,7 @@ bk_ci4::bk_ci4(const n64_span& span){
         int16_t chunk_y = span.get<int16_t>(chunk_offset + 2);
         int16_t chunk_w = span.get<int16_t>(chunk_offset + 4);
         int16_t chunk_h = span.get<int16_t>(chunk_offset + 6);
-        std::vector<uint8_t> tmp0 = span.to_vector<uint8_t>(chunk_offset + 0x8, (chunk_w*chunk_h + 1)/2);
+        auto tmp0 = span(chunk_offset + 0x8).get<std::vector<uint8_t>>((chunk_w*chunk_h + 1)/2);
         std::vector<uint8_t> tmp;
         tmp.reserve(chunk_w*chunk_h);
         for(int i = 0; i < chunk_w*chunk_h; i++){
@@ -105,7 +105,7 @@ bk_rgba16::bk_rgba16(const n64_span& span){
         std::cout << " w: " << chunk_w; 
         std::cout << " h: " << chunk_h; 
         std::cout << std::endl << std::flush;
-        std::vector<uint16_t>pxl_raw = span.to_vector<uint16_t>(chunk_offset, chunk_w*chunk_h);
+        std::vector<uint16_t>pxl_raw = span(chunk_offset).get<std::vector<uint16_t>>(chunk_w*chunk_h);
         std::vector<rgba32_t>ch_pxls;
         ch_pxls.reserve(chunk_w*chunk_h);
         std::transform(pxl_raw.begin(), pxl_raw.end(), std::back_inserter(ch_pxls),
@@ -160,7 +160,7 @@ bk_rgba32::bk_rgba32(const n64_span& span, bool explode){
         std::cout << " w: " << chunk_w; 
         std::cout << " h: " << chunk_h; 
         std::cout << std::endl << std::flush;
-        std::vector<uint32_t>pxl_raw = span.to_vector<uint32_t>(chunk_offset, chunk_w*chunk_h);
+        std::vector<uint32_t>pxl_raw = span(chunk_offset).get<std::vector<uint32_t>>(chunk_w*chunk_h);
         std::vector<rgba32_t>ch_pxls;
         ch_pxls.reserve(chunk_w*chunk_h);
         std::transform(pxl_raw.begin(), pxl_raw.end(), std::back_inserter(ch_pxls),
