@@ -5,4 +5,4 @@
 
 void bk_dialog2yaml(const bk_dialog_file& dialog_file, YAML::Emitter& emitter);
 
-bk_dialog_file bk_yaml2dialog(const YAML::Node& node);
+bk_dialog_file bk_yaml2dialog(YAML::Node const& node);

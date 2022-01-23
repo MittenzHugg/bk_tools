@@ -34,7 +34,7 @@ void bk_dialog2yaml(const bk_dialog_file& dialog_file, YAML::Emitter& emitter){
     emitter << YAML::EndMap;
 }
 
-bk_dialog_file bk_yaml2dialog(const YAML::Node& node){
+bk_dialog_file bk_yaml2dialog(YAML::Node const & node){
     bk_dialog_file out;
     
     for(const YAML::Node& e_node : node["data"]["bottom"]){
